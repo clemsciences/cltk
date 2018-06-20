@@ -536,6 +536,18 @@ class TestSequenceFunctions(unittest.TestCase):
         pos4 = ut.Position("inner", b, b)
         self.assertEqual(rule2.apply(pos4), True)
 
+        th = ut.Consonant("dental", "frictative", False, "θ", False)
+        ru1 = ut.Rule(ut.AbstractPosition("inner", None, ut.AbstractConsonant(voiced=True)), th, th)
+        self.assertEqual(ru1.ipa_to_regular_expression(ont.OLD_NORSE8_PHONOLOGY), "θ(?=bdglmnrvð)")
+
+        th = ut.Consonant("dental", "frictative", False, "θ", False)
+        ru2 = ut.Rule(ut.AbstractPosition("inner", None, ut.AbstractConsonant(voiced=True)), th, th)
+        print(ru2.ipa_to_regular_expression(ont.OLD_NORSE8_PHONOLOGY), )
+
+        th = ut.Consonant("dental", "frictative", False, "θ", False)
+        ru3 = ut.Rule(ut.AbstractPosition("inner", None, ut.AbstractConsonant(voiced=True)), th, th)
+        print(ru3.ipa_to_regular_expression(ont.OLD_NORSE8_PHONOLOGY))
+
 
 if __name__ == '__main__':
     unittest.main()
