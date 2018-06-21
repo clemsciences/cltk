@@ -6,7 +6,7 @@ Altnordisches Elementarbuch by Friedrich Ranke and Dietrich Hofmann
 
 import re
 from cltk.utils.cltk_logger import logger
-
+from cltk.phonology import utils as ut
 __author__ = ["Clément Besnier <clemsciences@gmail.com>"]
 
 # Definition of consonants
@@ -189,7 +189,7 @@ oee = Vowel("close-mid", "front", True, "short", "ø")
 oe = Vowel("open-mid", "front", True, "short", "œ")
 i = Vowel("close", "front", False, "short", "i")
 y = Vowel("close", "front", True, "short", "y")
-ao = Vowel("open", "back", True, "short", "ɒ"),
+ao = Vowel("open", "back", True, "short", "ɒ")
 oo = Vowel("open-mid", "back", True, "short", "ɔ")
 o = Vowel("close-mid", "back", True, "short", "o")
 u = Vowel("close", "back", True, "short", "u")
@@ -514,4 +514,18 @@ if __name__ == "__main__":
     print(transcribed_sentence)
     transcribed_sentence = tr.main(sentence, old_norse_rules)
     print(transcribed_sentence)
+
+    print(OLD_NORSE8_PHONOLOGY)
+    th = ut.Consonant("dental", "frictative", False, "θ", False)
+    ru1 = ut.Rule(ut.AbstractPosition("inner", None, ut.AbstractConsonant(voiced=True)), th, th)
+    print(ru1.ipa_to_regular_expression(OLD_NORSE8_PHONOLOGY))
+    print("θ(?=bdglmnrvð)")
+
+    th = ut.Consonant("dental", "frictative", False, "θ", False)
+    ru2 = ut.Rule(ut.AbstractPosition("first", None, ut.AbstractConsonant(voiced=True)), th, th)
+    print(ru2.ipa_to_regular_expression(OLD_NORSE8_PHONOLOGY))
+
+    th = ut.Consonant("dental", "frictative", False, "θ", False)
+    ru3 = ut.Rule(ut.AbstractPosition("last", ut.AbstractConsonant(voiced=True), None), th, th)
+    print(ru3.ipa_to_regular_expression(OLD_NORSE8_PHONOLOGY))
 
