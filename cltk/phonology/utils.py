@@ -278,9 +278,8 @@ class Rule:
         else:
             re_before = r"(?<="
             for phoneme in phonology:
-                print(self.position.before.ipar)
                 if phoneme.match(self.position.before):
-                    re_before += self.position.before.ipar
+                    re_before += phoneme.ipar
             re_before += r")"
 
         if self.position.position == "last":
@@ -290,11 +289,7 @@ class Rule:
         else:
             re_after = r"(?="
             for phoneme in phonology:
-                # print(phoneme.ipar)
-                print(self.position.after.ipar)
                 if phoneme.match(self.position.after):
-                    # print(phoneme.ipar)
-                    # print(self.position.after)
                     re_after += phoneme.ipar
             re_after += ")"
         return re_before+self.temp_sound.ipar+re_after
