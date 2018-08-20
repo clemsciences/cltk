@@ -72,6 +72,19 @@ class DeclinableNoGender:
         print("\n")
 
 
+class DeclinableOneGenderPattern:
+    def __init__(self, name, gender: Gender):
+        self.name = name
+        self.gender = gender
+        self.pattern = []
+
+    def set_pattern(self, pattern):
+        self.pattern = pattern
+
+    def apply_pattern(self, stem):
+        return [stem + self.pattern[a_number.value-1][a_case.value-1] for a_number in Number for a_case in Case]
+
+
 class DeclinableOneGender:
     def __init__(self, name: str, gender: Gender):
         self.declension = []
