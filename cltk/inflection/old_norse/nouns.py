@@ -1,6 +1,6 @@
 """Noun declensions"""
 
-import cltk.inflection.utils as decl_utils
+import cltk.inflection.old_norse.utils as decl_utils
 
 __author__ = ["Clément Besnier <clemsciences@aol.com>", ]
 

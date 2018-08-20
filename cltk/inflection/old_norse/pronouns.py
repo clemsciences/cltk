@@ -2,7 +2,7 @@
 
 """
 
-from cltk.inflection.utils import *
+from cltk.inflection.old_norse.utils import *
 
 
 # Demonstrative pronouns
