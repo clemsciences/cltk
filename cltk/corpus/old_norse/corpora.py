@@ -34,5 +34,12 @@ OLD_NORSE_CORPORA = [
         "location": "remote",
         "origin": "https://github.com/cltk/old_norse_dictionary_zoega.git",
         "type": "dictionary"
+    },
+    {
+        "encoding": "utf-8",
+        "name": "old_norse_runes_db",
+        "location": "remote",
+        "origin": "",
+        "type": "text"
     }
 ]
