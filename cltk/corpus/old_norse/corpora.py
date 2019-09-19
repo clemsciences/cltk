@@ -39,7 +39,7 @@ OLD_NORSE_CORPORA = [
         "encoding": "utf-8",
         "name": "old_norse_runes_db",
         "location": "remote",
-        "origin": "",
+        "origin": "https://github.com/clemsciences/old_norse_runes_db.git",
         "type": "text"
     }
 ]
