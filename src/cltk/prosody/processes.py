@@ -165,6 +165,7 @@ class OldNorseProsodyProcess(ProsodyProcess):
     >>> from cltk.core.data_types import Process, Pipeline
     >>> from cltk.tokenizers.processes import OldNorseTokenizationProcess
     >>> from cltk.filtering.processes import DefaultPunctuationRemovalProcess
+    >>> from cltk.phonology.processes import OldNorsePhonologicalTranscriberProcess, OldNorseSyllabificationProcess
     >>> from cltk.languages.utils import get_lang
     >>> from cltk.languages.example_texts import get_example_text
     >>> from cltk.nlp import NLP
