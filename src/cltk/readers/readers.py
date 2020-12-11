@@ -5,7 +5,7 @@ import logging
 import os
 import re
 import time
-from typing import Any, Dict, Generator, List, Set, Tuple
+from typing import Any, Dict, Generator, List, Tuple
 
 from nltk import pos_tag  # Replace with CLTK
 from nltk.corpus.reader import PlaintextCorpusReader
@@ -13,7 +13,7 @@ from nltk.corpus.reader.api import CorpusReader
 from nltk.probability import FreqDist
 from nltk.tokenize import sent_tokenize, word_tokenize  # Replace with CLTK
 
-from cltk.prosody.lat.string_utils import flatten
+from cltk.prosody.lat.scan.string_utils import flatten
 from cltk.sentence.sentence import SentenceTokenizer
 from cltk.tokenizers.word import WordTokenizer
 from cltk.utils import get_cltk_data_dir
