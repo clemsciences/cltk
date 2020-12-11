@@ -33,6 +33,8 @@ class PhonologicalTranscriptionProcess(Process):
         output_doc = deepcopy(input_doc)
         for word in output_doc.words:
             word.phonetic_transcription = transcriber(word.string.lower())
+            if hasattr(transcriber, "transcribe_phonemes"):
+                word.phonetic_object_transcription = transcriber.transcribe_phonemes(word.string.lower())
         return output_doc
 
 

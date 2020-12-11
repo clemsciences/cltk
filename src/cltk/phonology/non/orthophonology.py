@@ -156,6 +156,9 @@ class OldNorsePhonologicalTranscriber:
     def transcribe(self, word):
         return "".join([phoneme.ipa for phoneme in self.on.transcribe_word(word)])
 
+    def transcribe_phonemes(self, word):
+        return self.on.transcribe_word(word)
+
     def __repr__(self):
         return f"<OldNorseScanner>"
 

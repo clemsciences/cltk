@@ -6,6 +6,7 @@ TODO: Document and test better.
 
 __author__ = ["Clément Besnier <clem@clementbesnier.fr>"]
 
+import re
 from enum import Enum, auto
 
 POINT = "᛫"
@@ -198,3 +199,17 @@ SHORT_TWIG_YOUNGER_FUTHARK = [
     Rune(RunicAlphabetName.short_twig_younger_futhark, "\u16DA", "l", "l", "laguz"),
     Rune(RunicAlphabetName.short_twig_younger_futhark, "\u16E7", "r", "R", "algiz"),
 ]
+
+
+def old_norse_normalize(text: str) -> str:
+    """
+    >>> old_norse_normalize("Hvat er  þat?")
+    'hvat er þat'
+
+    :param text: text to normalize
+    :return: normalized text
+    """
+    res = text.lower()
+    res = re.sub(r"[\-:?;.,]", "", res)
+    res = re.sub(r" +", " ", res)
+    return res

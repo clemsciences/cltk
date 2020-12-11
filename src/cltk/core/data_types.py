@@ -24,6 +24,8 @@ from cltk.morphology.morphosyntax import (
 
 ud_mod = importlib.import_module("cltk.morphology.universal_dependencies_features")
 
+from cltk.phonology.orthophonology import AbstractPhoneme
+
 
 @dataclass
 class Language:
@@ -67,7 +69,7 @@ class Word:
     >>> Word(index_char_start=0, index_char_stop=6, index_token=0, string=get_example_text("lat")[0:6], pos="nom")
     Word(index_char_start=0, index_char_stop=6, index_token=0, index_sentence=None, string='Gallia', pos='nom', \
 lemma=None, stem=None, scansion=None, xpos=None, upos=None, dependency_relation=None, governor=None, features=None, \
-category=None, embedding=None, stop=None, named_entity=None, syllables=None, phonetic_transcription=None)
+category=None, embedding=None, stop=None, named_entity=None, syllables=None, phonetic_transcription=None, phonetic_object_transcription=None)
     """
 
     index_char_start: int = None
@@ -90,6 +92,7 @@ category=None, embedding=None, stop=None, named_entity=None, syllables=None, pho
     named_entity: bool = None
     syllables: List[str] = None
     phonetic_transcription: str = None
+    phonetic_object_transcription: List[AbstractPhoneme] = None
 
     def __getitem__(
         self, feature_name: Union[str, Type[MorphosyntacticFeature]]
@@ -271,6 +274,8 @@ class Doc:
         TODO: Consider option to use lemma
         """
         return self._get_words_attribute("embedding")
+
+    prosody_result = None
 
 
 @dataclass

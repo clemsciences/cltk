@@ -10,13 +10,13 @@ Some useful methods
 
 import logging
 import re
-from typing import Any, Dict, List
+from typing import Dict, List
 
-import cltk.prosody.lat.string_utils as string_utils
+import cltk.prosody.lat.utils.string_utils as string_utils
 from cltk.prosody.lat.metrical_validator import MetricalValidator
 from cltk.prosody.lat.scansion_constants import ScansionConstants
 from cltk.prosody.lat.scansion_formatter import ScansionFormatter
-from cltk.prosody.lat.syllabifier import Syllabifier
+from cltk.prosody.lat.utils.syllabifier import Syllabifier
 from cltk.prosody.lat.verse import Verse
 
 LOG = logging.getLogger(__name__)

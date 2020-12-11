@@ -24,6 +24,9 @@ __author__ = ["Tyler Kirby <tyler.kirby9398@gmail.com>"]
 __license__ = "MIT License"
 
 
+syllabifier = None
+
+
 # noinspection PyProtectedMember
 class Scansion:
     """Scans Greek texts that already contain macronized
@@ -230,9 +233,9 @@ class Scansion:
         >>> Scansion()._syllable_condenser(input_syllables)
         [['νε', 'ος', 'μεν', 'και', 'α', 'πει', 'ρος', 'δι', 'κων', 'ε', 'γω', 'γε', 'ε', 'τι'], ['μεν', 'και', 'α', 'πει', 'ρος']]
         """
-        sentences_syllables = list()
+        sentences_syllables = []
         for sentence in words_syllables:
-            syllables_sentence = list()  # type: List[str]
+            syllables_sentence = []  # type: List[str]
             for word in sentence:
                 syllables_sentence += word
             sentences_syllables.append(syllables_sentence)

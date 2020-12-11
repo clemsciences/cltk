@@ -16,13 +16,13 @@ import re
 
 from Levenshtein import distance
 
-import cltk.prosody.lat.string_utils as string_utils
+import cltk.prosody.lat.utils.string_utils as string_utils
 from cltk.prosody.lat.metrical_validator import MetricalValidator
 from cltk.prosody.lat.scansion_constants import ScansionConstants
 from cltk.prosody.lat.scansion_formatter import ScansionFormatter
-from cltk.prosody.lat.syllabifier import Syllabifier
+from cltk.prosody.lat.utils.syllabifier import Syllabifier
 from cltk.prosody.lat.verse import Verse
-from cltk.prosody.lat.verse_scanner import VerseScanner
+from cltk.prosody.lat.scan.verse_scanner import VerseScanner
 
 __author__ = ["Todd Cook <todd.g.cook@gmail.com>"]
 __license__ = "MIT License"

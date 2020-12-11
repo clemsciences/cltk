@@ -9,7 +9,7 @@ import logging
 import re
 from typing import List
 
-import cltk.prosody.lat.string_utils as string_utils
+import cltk.prosody.lat.utils.string_utils as string_utils
 from cltk.prosody.lat.scansion_constants import ScansionConstants
 
 LOG = logging.getLogger(__name__)
