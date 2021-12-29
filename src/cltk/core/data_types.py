@@ -13,7 +13,8 @@ import importlib
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, List, Type, Union
+import math
+from typing import Dict, List, Type, Union, Set, Tuple
 
 import numpy as np
 import stringcase as sc
@@ -86,7 +87,7 @@ class Word:
     definition: str = None
 
     def __getitem__(
-        self, feature_name: Union[str, Type[MorphosyntacticFeature]]
+            self, feature_name: Union[str, Type[MorphosyntacticFeature]]
     ) -> List[MorphosyntacticFeature]:
         """Accessor to help get morphosyntatic features from a word object."""
         return self.features[feature_name]
@@ -184,6 +185,8 @@ class Doc:
     normalized_text: str = None
     embeddings_model = None
     sentence_embeddings: Dict[int, np.ndarray] = field(repr=False, default=None)
+    label: str = ""  # may be the title of the document
+    date_hint: Union[int, List[int]] = None  # may be a date or a date span
 
     @property
     def sentences(self) -> List[Sentence]:
@@ -242,7 +245,7 @@ class Doc:
 
     @property
     def tokens_stops_filtered(
-        self,
+            self,
     ) -> List[str]:
         """Returns a list of string word tokens of all words in the
         doc, but with stopwords removed.
@@ -295,6 +298,115 @@ class Doc:
         TODO: Consider option to use lemma
         """
         return self._get_words_attribute("embedding")
+
+    def set_date_span(self, start: int, end: int):
+        """
+
+        :param start: year
+        :param end: year
+        """
+        if start < end:
+            self.date_hint = [start, end]
+        else:
+            raise ValueError("start must be before end")
+
+    def set_date(self, date: int):
+        self.date_hint = date
+
+
+@dataclass
+class Corpus:
+    docs: List[Doc] = None
+    _common_tokens: Dict[Tuple[int, int], Set[str]] = None
+    _cached = False
+
+    def add_doc(self, doc: Doc):
+        if not self.docs:
+            self.docs = []
+        self.docs.append(doc)
+        self._cached = False
+
+    def remove_doc(self, i: int):
+        if 0 <= i < len(self.docs):
+            self.docs.pop(i)
+            self._cached = False
+        else:
+            raise ValueError
+
+    @property
+    def tokens(self) -> Set[str]:
+        s = set()
+        for doc in self.docs:
+            s.update(doc.tokens)
+        return s
+
+    @property
+    def lemmata(self) -> Set[str]:
+        s = set()
+        for doc in self.docs:
+            s.update(doc.lemmata)
+        return s
+
+    @property
+    def token_distribution(self):
+        d = defaultdict(int)
+        for doc in self.docs:
+            for token in doc.tokens:
+                d[token] += 1
+        return d
+
+    @property
+    def token_distribution_by_doc(self):
+        d = defaultdict(list)
+        for i, doc in enumerate(self.docs):
+            for token in doc.tokens:
+                d[token].append(0)
+                d[token][i] += 1
+        return d
+
+    @property
+    def lemma_distribution(self):
+        d = defaultdict(int)
+        for doc in self.docs:
+            for lemma in doc.lemmata:
+                d[lemma] += 1
+        return d
+
+    def _update(self):
+        ct = {}
+        for i, doc1 in enumerate(self.docs):
+            for j, doc2 in enumerate(self.docs):
+                if i != j:
+                    set(doc1.tokens).intersection(doc2.tokens)
+                    ct[(i, j)] = set(doc1.tokens).intersection(doc2.tokens)
+        self._common_tokens = ct
+        self._cached = True
+
+    @property
+    def common_tokens(self):
+        if len(self.docs) == 0:
+            return {}
+        if not self._cached:
+            self._update()
+        return self._common_tokens
+
+    def __getitem__(self, item):
+        return self.docs[item]
+
+    @property
+    def vocabulary(self):
+        s = set()
+        for doc in self.docs:
+            s = s.union(doc.tokens)
+        return sorted(list(s))
+
+    def tf_idf(self, token: str, i: int) -> float:
+        return (math.log10(self.token_distribution_by_doc[token][i]) - math.log10(len(self.docs[i].tokens))) * \
+               (math.log10(len(self)) - math.log10(len([doc for doc in self.docs
+                                                        if token in doc.tokens])))
+
+    def __len__(self):
+        return len(self.docs)
 
 
 @dataclass
