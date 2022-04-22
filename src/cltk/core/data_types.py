@@ -299,6 +299,11 @@ class Doc:
         """
         return self._get_words_attribute("embedding")
 
+    def __len__(self):
+        """Returns the number of words in the document.
+        """
+        return len(self.words)
+
     def set_date_span(self, start: int, end: int):
         """
 
@@ -315,10 +320,13 @@ class Doc:
 
 
 @dataclass
-class Corpus:
+class DocCollection:
     docs: List[Doc] = None
     _common_tokens: Dict[Tuple[int, int], Set[str]] = None
     _cached = False
+    _token_distribution = None
+    _lemma_distribution = None
+    _token_distribution_by_doc = None
 
     def add_doc(self, doc: Doc):
         if not self.docs:
@@ -349,30 +357,24 @@ class Corpus:
 
     @property
     def token_distribution(self):
-        d = defaultdict(int)
-        for doc in self.docs:
-            for token in doc.tokens:
-                d[token] += 1
-        return d
+        if not self._cached:
+            self._update()
+        return self._token_distribution
 
     @property
     def token_distribution_by_doc(self):
-        d = defaultdict(list)
-        for i, doc in enumerate(self.docs):
-            for token in doc.tokens:
-                d[token].append(0)
-                d[token][i] += 1
-        return d
+        if not self._cached:
+            self._update()
+        return self._token_distribution_by_doc
 
     @property
     def lemma_distribution(self):
-        d = defaultdict(int)
-        for doc in self.docs:
-            for lemma in doc.lemmata:
-                d[lemma] += 1
-        return d
+        if not self._cached:
+            self._update()
+        return self._lemma_distribution
 
     def _update(self):
+        # region _common_tokens
         ct = {}
         for i, doc1 in enumerate(self.docs):
             for j, doc2 in enumerate(self.docs):
@@ -380,6 +382,34 @@ class Corpus:
                     set(doc1.tokens).intersection(doc2.tokens)
                     ct[(i, j)] = set(doc1.tokens).intersection(doc2.tokens)
         self._common_tokens = ct
+        # endregion
+
+        # region _token_distribution
+        d = defaultdict(int)
+        for doc in self.docs:
+            for token in doc.tokens:
+                d[token] += 1
+        self._token_distribution = d
+        # endregion
+
+        # region _token_distribution_by_doc
+        d = defaultdict(list)
+        for token in self.tokens:
+            d[token] = [0] * len(self)
+        for i, doc in enumerate(self.docs):
+            for token in doc.tokens:
+                d[token][i] += 1
+        self._token_distribution_by_doc = d
+        # endregion
+
+        # region lemma_distribution
+        d = defaultdict(int)
+        for doc in self.docs:
+            for lemma in doc.lemmata:
+                d[lemma] += 1
+        self._lemma_distribution = d
+        # endregion
+
         self._cached = True
 
     @property
@@ -401,9 +431,16 @@ class Corpus:
         return sorted(list(s))
 
     def tf_idf(self, token: str, i: int) -> float:
-        return (math.log10(self.token_distribution_by_doc[token][i]) - math.log10(len(self.docs[i].tokens))) * \
-               (math.log10(len(self)) - math.log10(len([doc for doc in self.docs
-                                                        if token in doc.tokens])))
+        return self.token_distribution_by_doc[token][i] / len(self.docs[i].tokens) * \
+               (math.log10(len(self) / len([doc for doc in self.docs
+                                            if token in doc.tokens])))
+
+    def tf_idf_matrix(self) -> List[List[float]]:
+
+        return [[self.token_distribution_by_doc[token][i] / len(doc) *
+                 (math.log10(len(self) / len([v for v in self.token_distribution_by_doc[token] if v > 0])))
+                 for token in self.vocabulary]
+                for i, doc in enumerate(self.docs)]
 
     def __len__(self):
         return len(self.docs)
