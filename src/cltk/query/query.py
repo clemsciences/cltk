@@ -1,6 +1,7 @@
-from typing import Union, List, Dict
+from collections import defaultdict
+from typing import Union, List, Dict, Set
 
-from cltk.core import Doc, Word
+from cltk.core import Doc, Word, CLTKException
 from boltons.cacheutils import cachedproperty
 
 
@@ -41,6 +42,64 @@ class QueryResults:
         return self.matches[item]
 
 
+class Match:
+    def __init__(self, w1, w2, fuzzy=False, only_attrs=None):
+        """
+        >>> Match()
+
+        """
+        self.w1 = w1
+        self.w2 = w2
+        self.fuzzy = fuzzy
+        self._only_attrs = only_attrs
+        self._check()
+
+    def _check(self):
+        """
+        >>> m = Match()
+        >>> m._check()
+
+        """
+        if self._only_attrs:
+            attributes_to_check = self._only_attrs
+        else:
+            attributes_to_check = Word.__dict__.keys()
+        # for key in attributes_to_check:
+        #     if key == 'pos':
+        #     elif key == 'upos':
+        #     elif key == 'lemma':
+        #     elif key == 'string':
+        #     elif key == 'phonetic_transcription':
+        #     elif key == 'category':
+        #     elif key == 'definition':
+        #     elif key == 'dependency_relation':
+        #     elif key == 'embedding':
+        #     elif key == 'features':
+        #     elif key == 'governor':
+        #     elif key == 'named_entity':
+        #
+        #     Word.pos
+        #     Word.upos
+        #     Word.xpos
+        #     Word.lemma
+        #     Word.string
+        #     Word.phonetic_transcription
+        #     Word.category
+        #     Word.definition
+        #     Word.dependency_relation
+        #     Word.embedding
+        #     Word.features
+        #     Word.governor
+        #     Word.named_entity
+        #     Word.scansion
+        #     Word.stem
+        #     Word.stop
+        #     Word.syllables
+
+    def compare_embedding(self) -> bool:
+        pass
+
+
 class QueryResult:
     """
     """
@@ -63,6 +122,20 @@ class QueryResult:
             return qrs
         else:
             raise ValueError()
+
+
+class WordQuery:
+    def __init__(self, *args):
+        """
+        >>> wq = WordQuery(Word(string="E"), Word(string="Ju"))
+        >>> wq.words
+
+        """
+        self.words = args
+        self.values = defaultdict(list)
+        for w in self.words:
+            for key in w.__dict__().keys():
+                self.values[key].append(w.__dict__()[key])
 
 
 class Query:
@@ -108,29 +181,19 @@ class Query:
                         self.result.add_match(self.doc.words[i: i+query_size])
         return self.result
 
+    def filter_cooccurrence(self, word_query: Union[List[Word], Set[Word]]):
+        if type(word_query) == list:
+            pass
+        elif type(word_query) == set:
+            pass
+        else:
+            raise CLTKException("wrong argument")
+
+
     @staticmethod
-    def compare_words(doc_word: Word, query_word: Word) -> bool:
-        matches = False
-        if query_word.pos is not None:
-            if doc_word.pos == query_word.pos:
-                matches = True
-            else:
-                return False
-        if query_word.lemma is not None:
-            if doc_word.lemma == query_word.lemma:
-                matches = True
-            else:
-                return False
-        if query_word.string is not None:
-            if doc_word.string == query_word.string:
-                matches = True
-            else:
-                return False
-        if query_word.phonetic_transcription is not None:
-            if doc_word.phonetic_transcription == query_word.phonetic_transcription:
-                matches = True
-            else:
-                return False
+    def compare_words(doc_word: Word, query_word: Word) -> Match:
+        matches = Match(doc_word, query_word)
+
         return matches
 
     @cachedproperty
