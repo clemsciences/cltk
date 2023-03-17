@@ -175,9 +175,11 @@ class WordQuery:
             return WordQuery(*(self.words + other.words))
         return None
 
-    def starts_with(self, word: Word, attribute: str) -> bool:
+    def starts_with(self, word: Word, attribute: str, lower=False) -> bool:
         if hasattr(word, attribute):
             value = word.__dict__[attribute]
+            if lower:
+                value = value.lower()
             if type(value) == str:
                 for v in self.values[attribute]:
                     if value.startswith(v):
@@ -185,9 +187,11 @@ class WordQuery:
                         return True
         return False
 
-    def ends_with(self, word: Word, attribute: str) -> bool:
+    def ends_with(self, word: Word, attribute: str, lower=False) -> bool:
         if hasattr(word, attribute):
             value = word.__dict__[attribute]
+            if lower:
+                value = value.lower()
             if type(value) == str:
                 for v in self.values[attribute]:
                     if value.endswith(v):
@@ -334,7 +338,7 @@ class Query:
     def result(self):
         return self.result
 
-    def starts_with(self, word_query: WordQuery, attribute: str, returns_bool=True) -> Union[bool, QueryResult]:
+    def starts_with(self, word_query: WordQuery, attribute: str, returns_bool=True, lower=False) -> Union[bool, QueryResult]:
         """
         >>> from cltk import NLP
         >>> non_nlp = NLP("non", suppress_banner=True)
@@ -352,7 +356,7 @@ class Query:
         """
         result = QueryResult(self.doc)
         for i, word in enumerate(self.doc.words):
-            if word_query.starts_with(word, attribute):
+            if word_query.starts_with(word, attribute, lower):
                 result.add_match(word)
         if returns_bool:
             return len(result.matches) > 0
