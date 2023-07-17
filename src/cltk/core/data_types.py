@@ -329,9 +329,9 @@ class Pipeline:
     True
     """
 
-    description: str
-    processes: List[Type[Process]]
-    language: Language
+    description: str = ""
+    processes: List[Type[Process]] = None
+    language: Language = None
 
     def add_process(self, process: Type[Process]):
         self.processes.append(process)
