@@ -1,0 +1,55 @@
+
+Sources:
+
+
+- Google Scholar
+- Machine learning for ancient languages: A survey
+@article{sommerschield2023machine,
+  title={Machine learning for ancient languages: A survey},
+  author={Sommerschield, Thea and Assael, Yannis and Pavlopoulos, John and Stefanak, Vanessa and Senior, Andrew and Dyer, Chris and Bodel, John and Prag, Jonathan and Androutsopoulos, Ion and Freitas, Nando de},
+  journal={Computational Linguistics},
+  pages={1--45},
+  year={2023},
+  publisher={MIT Press One Broadway, 12th Floor, Cambridge, Massachusetts 02142, USA~…}
+}
+
+- Evaluation of HTR models without ground truth material
+
+- Machine translation of 16th century letters from Latin to German
+- Exploring Large Language Models for Classical Philology
+- Larth: Dataset and Machine Translation for Etruscan
+- Metaphor detection for low resource languages: From zero-shot to few-shot learning in Middle High German
+- LatinCy: Synthetic Trained Pipelines for Latin NLP
+- Transformer-based named entity recognition for ancient greek
+- Named Entity Annotation Projection Applied to Classical Languages
+- Sentence Embedding Models for Ancient Greek Using Multilingual Knowledge Distillation
+- OdyCy–A general-purpose NLP pipeline for Ancient Greek
+- Towards coreference resolution for Early Irish
+- Flexible Techniques for Automatic Text Recognition of Historical Documents
+- A COMPARATIVE ANALYSIS OF NLP ALGORITHMS FOR IMPLEMENTING AI CONVERSATIONAL ASSISTANTS: Comparative Analysis of NLP Algorithms for NLI
+- Evaluating Existing Lemmatisers on Unedited Byzantine Greek Poetry
+- Machine Translation of Complex Sentences from Latin to German
+- Training and Evaluation of Named Entity Recognition Models for Classical Latin
+- Deep Learning for Intertext Discovery in Latin Epic: Latin SBERT and the Lucan-Vergil Benchmark
+- TxtPrePro: Text Data Preprocessing Using Streamlit Technique for Text Analytics Process
+- Named-Entity Dataset for Medieval Latin, Middle High German and Old Norse
+- Latin Authorship Attribution [](https://sufurelite.github.io/assets/pdf/Latin_Authorship_Attribution.pdf) by Rufus Behr
+
+
+## Semantoc Scholar
+https://www.semanticscholar.org/paper/The-Classical-Language-Toolkit%3A-An-NLP-Framework-Johnson-Burns/4bec66ec7b21cc8ef2f7dd4cfc79d0fa96e5d417#citing-papers
+
+- LatinCy: Synthetic Trained Pipelines for Latin NLP
+- Exploring Large Language Models for Classical Philology
+- Named Entity Annotation Projection Applied to Classical Languages
+- Larth: Dataset and Machine Translation for Etruscan
+- Sentence Embedding Models for Ancient Greek Using Multilingual Knowledge Distillation
+- OdyCy – A general-purpose NLP pipeline for Ancient Greek
+- Machine Translation of 16Th Century Letters from Latin to German
+- YATO: Yet Another deep learning based Text analysis Open toolkit
+- Metaphor Detection for Low Resource Languages: From Zero-Shot to Few-Shot Learning in Middle High German
+- Towards Coreference Resolution for Early Irish
+- Named-Entity Dataset for Medieval Latin, Middle High German and Old Norse
+- TxtPrePro: Text Data Preprocessing Using Streamlit Technique for Text Analytics Process
+- Evaluation of HTR models without Ground Truth Material
+- AGILe: The First Lemmatizer for Ancient Greek Inscriptions
