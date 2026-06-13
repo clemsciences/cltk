@@ -47,11 +47,11 @@ class NLP:
       language_code: Language key (Glottolog code, ISO code, or exact name).
         Required unless ``cltk_config`` is provided.
       backend: One of ``"stanza"`` (default), ``"openai"``, ``"ollama"``,
-        ``"ollama-cloud"``, or ``mistral``. The ``"spacy"`` backend is not
-        yet implemented and will raise ``NotImplementedError``.
+        ``"ollama-cloud"``, ``mistral``, or ``anthropic``. The ``"spacy"``
+        backend is not yet implemented and will raise ``NotImplementedError``.
       model: Optional model name when using generative backends
-        (``"openai"``, ``"ollama"``, ``"ollama-cloud"``, ``mistral``). Ignored for
-        ``"stanza"``.
+        (``"openai"``, ``"ollama"``, ``"ollama-cloud"``, ``mistral``,
+        ``anthropic``). Ignored for ``"stanza"``.
       custom_pipeline: Optional pipeline to use instead of the default mapping.
       suppress_banner: If true, suppresses informational console output.
       cltk_config: Optional :class:`~cltk.core.data_types.CLTKConfig` bundle.
@@ -63,6 +63,9 @@ class NLP:
       - When ``backend`` is ``"ollama"`` or ``"ollama-cloud"`` and no ``model``
         is provided, defaults to ``"llama3.1:8b"``. ``"ollama-cloud"`` requires
         ``OLLAMA_CLOUD_API_KEY`` in the environment.
+      - When ``backend == "anthropic"`` and no ``model`` is provided, defaults
+        to ``"claude-opus-4-8"``. Requires ``ANTHROPIC_API_KEY`` in the
+        environment.
       - The ``"stanza"`` backend does not accept a ``model`` parameter; language
         models are bound to the pipeline for each language.
 
@@ -191,6 +194,19 @@ class NLP:
             # Default model if none provided
             self.model = self.model or getattr(backend_config, "model", None)
             self.model = self.model or "mistral-medium-latest"
+        elif self.backend == "anthropic":
+            # Prefer API key from config when provided
+            self.api_key = getattr(backend_config, "api_key", None)
+            if not self.api_key:
+                load_env_file()
+                self.api_key = os.getenv("ANTHROPIC_API_KEY")
+            if not self.api_key:
+                anthropic_msg: str = "API key for Anthropic not found."
+                logger.error(anthropic_msg)
+                raise ValueError(anthropic_msg)
+            # Default model if none provided
+            self.model = self.model or getattr(backend_config, "model", None)
+            self.model = self.model or "claude-opus-4-8"
         self.pipeline: Pipeline = (
             custom_pipeline if custom_pipeline else self._get_pipeline()
         )
@@ -381,7 +397,13 @@ class NLP:
 
     def _maybe_attach_enrichment_process(self) -> None:
         """Append GenAI enrichment to generative pipelines if missing."""
-        if self.backend not in ("openai", "ollama", "ollama-cloud", "mistral"):
+        if self.backend not in (
+            "openai",
+            "ollama",
+            "ollama-cloud",
+            "mistral",
+            "anthropic",
+        ):
             return
         try:
             processes = (
@@ -478,6 +500,8 @@ class NLP:
             # Reuse the same generative pipelines; lower layers pick the client by backend
             mapping = MAP_LANGUAGE_CODE_TO_GENERATIVE_PIPELINE
         elif self.backend == "mistral":
+            mapping = MAP_LANGUAGE_CODE_TO_GENERATIVE_PIPELINE
+        elif self.backend == "anthropic":
             mapping = MAP_LANGUAGE_CODE_TO_GENERATIVE_PIPELINE
         else:
             raise NotImplementedError(f"Backend '{self.backend}' not available.")

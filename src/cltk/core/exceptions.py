@@ -60,3 +60,9 @@ class MistralInferenceError(CLTKException):
     """Raised when Mistral inference fails or returns an invalid response."""
 
     pass
+
+
+class AnthropicInferenceError(CLTKException):
+    """Raised when Anthropic inference fails or returns an invalid response."""
+
+    pass

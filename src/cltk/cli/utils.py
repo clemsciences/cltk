@@ -18,6 +18,7 @@ BACKEND_CHOICES: set[str] = {
     "ollama",
     "ollama-cloud",
     "mistral",
+    "anthropic",
     "spacy",
 }
 
@@ -118,6 +119,7 @@ def build_cltk_config(
             "stanza",
             "openai",
             "mistral",
+            "anthropic",
             "ollama",
         }
         if config_keys.intersection(config.keys()):

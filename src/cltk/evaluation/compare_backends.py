@@ -90,6 +90,7 @@ from typing import Any, Iterable, Optional, TypedDict
 from cltk import NLP
 from cltk.core.cltk_logger import logger
 from cltk.core.data_types import (
+    AnthropicBackendConfig,
     CLTKConfig,
     Doc,
     MistralBackendConfig,
@@ -1126,6 +1127,14 @@ def _build_cltk_config(
             backend=backend,
             suppress_banner=True,
             mistral=backend_config,
+        )
+    if backend == "anthropic":
+        backend_config = AnthropicBackendConfig(**overrides) if overrides else None
+        return CLTKConfig(
+            language_code=language,
+            backend=backend,
+            suppress_banner=True,
+            anthropic=backend_config,
         )
     if backend in ("ollama", "ollama-cloud"):
         backend_config = OllamaBackendConfig(**overrides) if overrides else None

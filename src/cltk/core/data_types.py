@@ -40,7 +40,7 @@ ScriptDir: TypeAlias = Literal["ltr", "rtl", "ttb", "btt"]
 
 
 BACKEND_TYPES: TypeAlias = Literal[
-    "openai", "stanza", "spacy", "ollama", "ollama-cloud", "mistral"
+    "openai", "stanza", "spacy", "ollama", "ollama-cloud", "mistral", "anthropic"
 ]
 AVAILABLE_OPENAI_MODELS: TypeAlias = Literal["gpt-5-mini", "gpt-5"]
 
@@ -49,6 +49,12 @@ AVAILABLE_MISTRAL_MODELS: TypeAlias = Literal[
     "magistral-small-latest",
     "mistral-medium-latest",
     "mistral-large-latest",
+]
+
+AVAILABLE_ANTHROPIC_MODELS: TypeAlias = Literal[
+    "claude-opus-4-8",
+    "claude-sonnet-4-6",
+    "claude-haiku-4-5",
 ]
 
 # Pronunciation modes for IPA rendering (especially Ancient Greek)
@@ -580,6 +586,20 @@ class MistralBackendConfig(ModelConfig):
     api_key: Optional[str] = None
 
 
+class AnthropicBackendConfig(ModelConfig):
+    """Options specific to the Anthropic (Claude) backend.
+
+    Note: ``temperature`` is only sent for models that still accept sampling
+    parameters; Claude Opus 4.7+ rejects them, so it is skipped there.
+    """
+
+    model: Optional[Union[AVAILABLE_ANTHROPIC_MODELS, str]] = None
+    temperature: float = Field(default=1.0, ge=0, le=1)
+    max_tokens: int = Field(default=16000, gt=0)
+    max_retries: int = Field(default=2, ge=0)
+    api_key: Optional[str] = None
+
+
 class OllamaBackendConfig(ModelConfig):
     """Options specific to the Ollama backend (local or remote)."""
 
@@ -628,6 +648,7 @@ class CLTKConfig(BaseModel):
     stanza: Optional[StanzaBackendConfig] = None
     openai: Optional[OpenAIBackendConfig] = None
     mistral: Optional[MistralBackendConfig] = None
+    anthropic: Optional[AnthropicBackendConfig] = None
     ollama: Optional[OllamaBackendConfig] = None
 
     model_config = {"extra": "forbid"}
@@ -641,6 +662,7 @@ class CLTKConfig(BaseModel):
             "stanza": self.stanza,
             "openai": self.openai,
             "mistral": self.mistral,
+            "anthropic": self.anthropic,
             "ollama": self.ollama,
             "ollama-cloud": self.ollama,
             "spacy": None,
@@ -664,6 +686,7 @@ class CLTKConfig(BaseModel):
                 ("stanza", self.stanza),
                 ("openai", self.openai),
                 ("mistral", self.mistral),
+                ("anthropic", self.anthropic),
                 ("ollama", self.ollama),
             )
             if cfg is not None
@@ -677,6 +700,7 @@ class CLTKConfig(BaseModel):
                 "stanza": {"stanza"},
                 "openai": {"openai"},
                 "mistral": {"mistral"},
+                "anthropic": {"anthropic"},
                 "ollama": {"ollama"},
                 "ollama-cloud": {"ollama"},
                 "spacy": set(),

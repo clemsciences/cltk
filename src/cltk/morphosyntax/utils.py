@@ -14,8 +14,10 @@ from tqdm import tqdm
 
 from cltk.core.cltk_logger import bind_context, logger
 from cltk.core.data_types import (
+    AVAILABLE_ANTHROPIC_MODELS,
     AVAILABLE_MISTRAL_MODELS,
     AVAILABLE_OPENAI_MODELS,
+    AnthropicBackendConfig,
     CLTKGenAIResponse,
     Doc,
     MistralBackendConfig,
@@ -32,6 +34,7 @@ from cltk.core.provenance import (
     build_provenance_record,
     extract_doc_config,
 )
+from cltk.genai.anthropic import AnthropicConnection, AsyncAnthropicConnection
 from cltk.genai.mistral import AsyncMistralConnection, MistralConnection
 from cltk.genai.ollama import AsyncOllamaConnection, OllamaConnection
 from cltk.genai.openai import AsyncOpenAIConnection, OpenAIConnection
@@ -216,7 +219,7 @@ def generate_pos(
         log.debug(prompt)
     # code_blocks: list[Any] = []
     if not doc.backend:
-        msg_no_backend: str = "Doc must have `.backend` set to 'openai', 'mistral', 'ollama', or 'ollama-cloud' to use generate_pos."
+        msg_no_backend: str = "Doc must have `.backend` set to 'openai', 'mistral', 'anthropic', 'ollama', or 'ollama-cloud' to use generate_pos."
         log.error(msg_no_backend)
         raise CLTKException(msg_no_backend)
     if not doc.model:
@@ -269,6 +272,29 @@ def generate_pos(
                 api_key=getattr(mistral_cfg, "api_key", None),
                 temperature=getattr(mistral_cfg, "temperature", 1.0),
             )
+    elif doc.backend == "anthropic":
+        if doc.model not in get_args(AVAILABLE_ANTHROPIC_MODELS):
+            msg_unsupported_backend_version = (
+                f"Doc has unsupported `.model`: {doc.model}. "
+                f"Supported versions are: {get_args(AVAILABLE_ANTHROPIC_MODELS)}."
+            )
+            log.error(msg_unsupported_backend_version)
+            raise CLTKException(msg_unsupported_backend_version)
+        if not client:
+            anthropic_cfg = (
+                backend_config
+                if isinstance(backend_config, AnthropicBackendConfig)
+                else None
+            )
+            anthropic_model: AVAILABLE_ANTHROPIC_MODELS = cast(
+                AVAILABLE_ANTHROPIC_MODELS, doc.model
+            )
+            client = AnthropicConnection(
+                model=anthropic_model,
+                api_key=getattr(anthropic_cfg, "api_key", None),
+                temperature=getattr(anthropic_cfg, "temperature", 1.0),
+                max_tokens=getattr(anthropic_cfg, "max_tokens", 16000),
+            )
     elif doc.backend in ("ollama", "ollama-cloud"):
         if not client:
             ollama_cfg = (
@@ -292,7 +318,7 @@ def generate_pos(
             )
     else:
         raise CLTKException(
-            f"Unsupported backend for generate_pos: {doc.backend}. Use 'openai', 'mistral', 'ollama', or 'ollama-cloud'."
+            f"Unsupported backend for generate_pos: {doc.backend}. Use 'openai', 'mistral', 'anthropic', 'ollama', or 'ollama-cloud'."
         )
     openai_res_obj: CLTKGenAIResponse = client.generate(
         prompt=prompt, max_retries=max_retries
@@ -483,9 +509,20 @@ def generate_gpt_morphosyntax(
         client = MistralConnection(
             model=mistral_model,
         )
+    elif doc.backend == "anthropic":
+        if doc.model not in get_args(AVAILABLE_ANTHROPIC_MODELS):
+            raise CLTKException(
+                f"Doc has unsupported `.model`: {doc.model}. Supported: {get_args(AVAILABLE_ANTHROPIC_MODELS)}."
+            )
+        anthropic_model: AVAILABLE_ANTHROPIC_MODELS = cast(
+            AVAILABLE_ANTHROPIC_MODELS, doc.model
+        )
+        client = AnthropicConnection(
+            model=anthropic_model,
+        )
     else:
         raise CLTKException(
-            f"Unsupported backend for morphosyntax: {doc.backend}. Use 'openai', 'mistral', 'ollama', or 'ollama-cloud'."
+            f"Unsupported backend for morphosyntax: {doc.backend}. Use 'openai', 'mistral', 'anthropic', 'ollama', or 'ollama-cloud'."
         )
     if not doc.normalized_text:
         msg = "Input document must have either `.normalized_text`."
@@ -666,6 +703,25 @@ async def generate_gpt_morphosyntax_async(
             model=mistral_model,
             api_key=getattr(mistral_cfg, "api_key", None),
             temperature=getattr(mistral_cfg, "temperature", 1.0),
+        )
+    elif doc.backend == "anthropic":
+        if doc.model not in get_args(AVAILABLE_ANTHROPIC_MODELS):
+            raise CLTKException(
+                f"Doc has unsupported `.model`: {doc.model}. Supported: {get_args(AVAILABLE_ANTHROPIC_MODELS)}."
+            )
+        anthropic_model: AVAILABLE_ANTHROPIC_MODELS = cast(
+            AVAILABLE_ANTHROPIC_MODELS, doc.model
+        )
+        anthropic_cfg = (
+            backend_config
+            if isinstance(backend_config, AnthropicBackendConfig)
+            else None
+        )
+        conn = AsyncAnthropicConnection(
+            model=anthropic_model,
+            api_key=getattr(anthropic_cfg, "api_key", None),
+            temperature=getattr(anthropic_cfg, "temperature", 1.0),
+            max_tokens=getattr(anthropic_cfg, "max_tokens", 16000),
         )
     else:
         raise CLTKException(

@@ -14,8 +14,9 @@ This guide helps you install CLTK and run working examples using each backend.
     - Stanza: `pip install "cltk[stanza]"`
     - OpenAI: `pip install "cltk[openai]"`
     - Mistral: `pip install "cltk[mistral]"`
+    - Anthropic: `pip install "cltk[anthropic]"`
     - Ollama (local or cloud): `pip install "cltk[ollama]"`
-- You can combine extras, e.g. `pip install "cltk[openai,stanza,ollama,mistral]"`.
+- You can combine extras, e.g. `pip install "cltk[openai,stanza,ollama,mistral,anthropic]"`.
 
 ## Environment Variables
 
@@ -74,13 +75,29 @@ for w in doc.words:
     print(f"{w.string}\t{w.lemma}\t{upos}\t{feats}")
 ```
 
+### Anthropic
+
+- Install `cltk[anthropic]`.
+- Requires `ANTHROPIC_API_KEY`.
+- Defaults to model `claude-opus-4-8` if not specified.
+
+```python
+import os
+os.environ["ANTHROPIC_API_KEY"] = "sk-ant-..."  # or set in your shell/.env
+
+from cltk import NLP
+nlp = NLP("lati1261", backend="anthropic", suppress_banner=True)
+doc = nlp.analyze("Gallia est omnis divisa in partes tres.")
+print(len(doc.words), "tokens")
+```
+
 ### Ollama
 
 #### Ollama Local
 - Install `cltk[ollama]`.
 - Install the [Ollama server](https://ollama.com/) and run on `http://127.0.0.1:11434`).
 - Defaults to model `llama3.1:8b` if not specified. You can pass any available model string.
-- Note: You may override the Ollama host, port, and model. See [Advanced Configuration](advanced-configuration.md)
+- Note: You may override the Ollama host, port, and model. See [Advanced Configuration](advanced-model-configuration.md)
 
 
 ```python

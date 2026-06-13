@@ -101,7 +101,7 @@ testBuilt:
 	$$tmpdir/venv/bin/python -m pip install -r $$tmpdir/dev-requirements.txt; \
 	whl_path=$$(ls $$tmpdir/dist/cltk-*.whl); \
 	echo "Installing built wheel with all extras ..."; \
-	$$tmpdir/venv/bin/python -m pip install "$$whl_path[stanza,openai,mistral,ollama]"; \
+	$$tmpdir/venv/bin/python -m pip install "$$whl_path[stanza,openai,mistral,anthropic,ollama]"; \
 	echo "Running pytest against installed wheel ..."; \
 	$$tmpdir/venv/bin/python -m pytest tests
 

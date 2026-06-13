@@ -38,7 +38,7 @@ def configure_parser(subparsers: argparse._SubParsersAction) -> None:
     parser.add_argument(
         "--backend",
         default="stanza",
-        help="Backend to use (stanza, openai, ollama, mistral, spacy).",
+        help="Backend to use (stanza, openai, ollama, mistral, anthropic, spacy).",
     )
     parser.add_argument("--pipeline", help="Optional pipeline class name to use.")
     parser.add_argument("--text", help="Raw text to analyze.")

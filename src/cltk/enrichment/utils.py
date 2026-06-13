@@ -7,9 +7,11 @@ from typing import Any, Callable, Optional, cast, get_args
 
 from cltk.core.cltk_logger import logger
 from cltk.core.data_types import (
+    AVAILABLE_ANTHROPIC_MODELS,
     AVAILABLE_MISTRAL_MODELS,
     AVAILABLE_OPENAI_MODELS,
     IPA_PRONUNCIATION_MODE,
+    AnthropicBackendConfig,
     CLTKGenAIResponse,
     Doc,
     Gloss,
@@ -35,6 +37,7 @@ from cltk.core.provenance import (
     build_provenance_record,
     extract_doc_config,
 )
+from cltk.genai.anthropic import AnthropicConnection
 from cltk.genai.mistral import MistralConnection
 from cltk.genai.ollama import OllamaConnection
 from cltk.genai.openai import OpenAIConnection
@@ -616,6 +619,25 @@ def generate_gpt_enrichment(
             model=cast(AVAILABLE_MISTRAL_MODELS, doc.model),
             api_key=getattr(mistral_cfg, "api_key", None),
             temperature=getattr(mistral_cfg, "temperature", 1.0),
+        )
+    elif doc.backend == "anthropic":
+        if doc.model not in get_args(AVAILABLE_ANTHROPIC_MODELS):
+            msg_unsupported_anthropic_version: str = (
+                f"Doc has unsupported `.model`: {doc.model}. "
+                f"Supported versions are: {get_args(AVAILABLE_ANTHROPIC_MODELS)}."
+            )
+            log.error(msg_unsupported_anthropic_version)
+            raise CLTKException(msg_unsupported_anthropic_version)
+        anthropic_cfg = (
+            backend_config
+            if isinstance(backend_config, AnthropicBackendConfig)
+            else None
+        )
+        client = AnthropicConnection(
+            model=cast(AVAILABLE_ANTHROPIC_MODELS, doc.model),
+            api_key=getattr(anthropic_cfg, "api_key", None),
+            temperature=getattr(anthropic_cfg, "temperature", 1.0),
+            max_tokens=getattr(anthropic_cfg, "max_tokens", 16000),
         )
     else:
         raise CLTKException(f"Unsupported backend for enrichment: {doc.backend}.")

@@ -42,6 +42,13 @@ def _run_mistral() -> CLTKGenAIResponse:
     return conn.generate(prompt=PROMPT, max_retries=1)
 
 
+def _run_anthropic() -> CLTKGenAIResponse:
+    from cltk.genai.anthropic import AnthropicConnection
+
+    conn = AnthropicConnection(model="claude-opus-4-8")
+    return conn.generate(prompt=PROMPT, max_retries=1)
+
+
 # def _run_ollama_cloud() -> CLTKGenAIResponse:
 #     from cltk.genai.ollama import OllamaConnection
 
@@ -61,6 +68,7 @@ def _run_ollama_local() -> CLTKGenAIResponse:
     [
         ("openai", "OPENAI_API_KEY", "openai", _run_openai),
         ("mistral", "MISTRAL_API_KEY", "mistralai", _run_mistral),
+        ("anthropic", "ANTHROPIC_API_KEY", "anthropic", _run_anthropic),
         # ("ollama-cloud", "OLLAMA_CLOUD_API_KEY", "ollama", _run_ollama_cloud),
         ("ollama-local", None, "ollama", _run_ollama_local),
     ],
@@ -89,6 +97,7 @@ def _run_nlp_backend(backend: BACKEND_TYPES) -> None:
     [
         ("openai", "OPENAI_API_KEY", "openai", "openai"),
         ("mistral", "MISTRAL_API_KEY", "mistralai", "mistral"),
+        ("anthropic", "ANTHROPIC_API_KEY", "anthropic", "anthropic"),
         # ("ollama-cloud", "OLLAMA_CLOUD_API_KEY", "ollama", "ollama-cloud"),
         ("ollama-local", None, "ollama", "ollama"),
     ],

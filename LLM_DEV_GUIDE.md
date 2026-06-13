@@ -8,14 +8,14 @@ This guide tells humans and LLM-based helpers how to extend or modify CLTK's Gen
 - Avoid introducing new dependencies unless strictly necessary. Use the existing wrappers instead of one-off SDK calls.
 
 ## Architecture quick map
-- Entry points: `OpenAIConnection`, `AsyncOpenAIConnection` (`src/cltk/genai/openai.py`); `OllamaConnection`, `AsyncOllamaConnection` (`src/cltk/genai/ollama.py`); `MistralConnection` (`src/cltk/genai/mistral.py`).
+- Entry points: `OpenAIConnection`, `AsyncOpenAIConnection` (`src/cltk/genai/openai.py`); `OllamaConnection`, `AsyncOllamaConnection` (`src/cltk/genai/ollama.py`); `MistralConnection` (`src/cltk/genai/mistral.py`); `AnthropicConnection`, `AsyncAnthropicConnection` (`src/cltk/genai/anthropic.py`).
 - Prompt builders live in `src/cltk/genai/prompts.py`; extend these instead of inlining prompts.
 - GenAI processes plug into pipelines via `GenAIMorphosyntaxProcess` and `GenAIDependencyProcess` in `src/cltk/morphosyntax/processes.py` and `src/cltk/dependency/processes.py`.
 - Responses are normalized to `CLTKGenAIResponse` (`src/cltk/core/data_types.py`); keep that shape stable.
 
 ## Runtime, configuration, dependencies
-- Supported extras: `cltk[openai]` and `cltk[ollama]`. Env vars: `OPENAI_API_KEY`, `OLLAMA_CLOUD_API_KEY`. Use `.env` loading via `load_env_file()` when needed.
-- Default models: OpenAI backend uses `gpt-5-mini` by default; Ollama backend uses `llama3.1:8b`. Override via the `model` parameter; document any non-default you hardcode.
+- Supported extras: `cltk[openai]`, `cltk[ollama]`, `cltk[mistral]`, and `cltk[anthropic]`. Env vars: `OPENAI_API_KEY`, `OLLAMA_CLOUD_API_KEY`, `MISTRAL_API_KEY`, `ANTHROPIC_API_KEY`. Use `.env` loading via `load_env_file()` when needed.
+- Default models: OpenAI backend uses `gpt-5-mini` by default; Ollama backend uses `llama3.1:8b`; Anthropic backend uses `claude-opus-4-8`. Override via the `model` parameter; document any non-default you hardcode.
 - Keep temperature, top_p, and timeouts explicit; set conservative defaults (e.g., low temperature) for reproducibility.
 - Do not add new network calls outside the existing clients; prefer dependency-free utilities from `src/cltk/utils/` and `src/cltk/text/`.
 
